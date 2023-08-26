@@ -8,20 +8,16 @@
 
 function isPalindrome(str) {
   if (str.length === 1) return true;
-
   str = str.toLowerCase();
-  console.log(str);
 
   let i = 0,
     j = str.length - 1;
 
   while (i < j) {
     if (/^[a-zA-Z]$/.test(str[i]) && /^[a-z]$/.test(str[j])) {
-      if (str[i] !== str[j]) {
+      if (str[i++] !== str[j--]) {
         return false;
       }
-      i++;
-      j--;
     } else if (/^[a-zA-Z]$/.test(str[i])) j--;
     else i++;
   }
