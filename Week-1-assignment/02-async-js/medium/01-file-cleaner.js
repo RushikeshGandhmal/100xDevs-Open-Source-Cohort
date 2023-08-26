@@ -12,12 +12,23 @@ hello world my name is raman
 
 const fs = require("fs");
 
-function removeSpaces(data) {
-  let str = "";
-  for (const char of data) {
-    if (char !== " ") str += char;
+function removeExtraSpaces(str) {
+  let result = "";
+  let lastCharWasSpace = false;
+
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] !== " ") {
+      result += str[i];
+      lastCharWasSpace = false;
+    } else if (!lastCharWasSpace) {
+      result += " ";
+      lastCharWasSpace = true;
+    }
   }
-  return str;
+  return result.trim();
+
+  // Use regular expression to replace consecutive spaces with a single space
+  // return str.replace(/\s+/g, " ").trim();
 }
 
 function passData(err, data) {
@@ -26,7 +37,7 @@ function passData(err, data) {
     return;
   }
 
-  fs.writeFile("file.txt", removeSpaces(data), "utf8", () => {});
+  fs.writeFile("file.txt", removeExtraSpaces(data), "utf8", () => {});
 }
 
 fs.readFile("file.txt", "utf8", passData);
