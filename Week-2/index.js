@@ -4,6 +4,10 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
+app.get("/:username", (req, res) => {
+  console.log(req.params.username);
+});
+
 app.get("/", (req, res) => {
   //   const number = Number(prompt("enter a number"));
   const counter = req.query.counter; // query parameter
