@@ -5,8 +5,9 @@ const app = express();
 const port = 3000;
 
 app.get("/", (req, res) => {
-  const number = Number(prompt("enter a number"));
-  const sum = calculateSum(number);
+  //   const number = Number(prompt("enter a number"));
+  const counter = req.query.counter; // query parameter
+  const sum = calculateSum(counter);
   res.send(`Calculated sum is ${sum}`);
 });
 
