@@ -1,5 +1,5 @@
 const express = require("express");
-const prompt = require("prompt-sync")();
+// const prompt = require("prompt-sync")();
 
 const app = express();
 const port = 3000;
