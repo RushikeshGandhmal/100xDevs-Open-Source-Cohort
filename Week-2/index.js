@@ -4,6 +4,13 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
+const middleWare = (req, res, next) => {
+  console.log("Inside middleWare ", req.headers.counter);
+  next();
+};
+
+app.use(middleWare);
+
 app.get("/:username", (req, res) => {
   console.log(req.params.username);
 });
@@ -13,6 +20,12 @@ app.get("/", (req, res) => {
   const counter = req.query.counter; // query parameter
   const sum = calculateSum(counter);
   res.send(`Calculated sum is ${sum}`);
+});
+
+app.post("/handleSum", (req, res) => {
+  const counter = req.headers.counter; // header parameter
+  const sum = calculateSum(counter);
+  res.send(`From Headers, calculated sum is ${sum}`);
 });
 
 app.listen(port, () => {
