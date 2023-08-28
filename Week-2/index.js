@@ -32,8 +32,12 @@ app.post("/handleSum", (req, res) => {
 
 app.post("/bodyParser", (req, res) => {
   const bodyCounter = req.body.counter; // getting from body which is parsed by body-parser
-  const sum = calculateSum(bodyCounter);
-  res.send(`From Body, calculated sum is ${sum}`);
+  if (bodyCounter < 100000) {
+    const sum = calculateSum(bodyCounter);
+    res.send(`From Body, calculated sum is ${sum}`);
+  } else {
+    res.status(411).send("You have enterted a large number");
+  }
 });
 
 app.listen(port, () => {
