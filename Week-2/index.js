@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 // const prompt = require("prompt-sync")();
 
 const app = express();
@@ -9,7 +10,8 @@ const middleWare = (req, res, next) => {
   next();
 };
 
-app.use(middleWare);
+// app.use(middleWare);
+app.use(bodyParser.json());
 
 app.get("/:username", (req, res) => {
   console.log(req.params.username);
@@ -26,6 +28,12 @@ app.post("/handleSum", (req, res) => {
   const counter = req.headers.counter; // header parameter
   const sum = calculateSum(counter);
   res.send(`From Headers, calculated sum is ${sum}`);
+});
+
+app.post("/bodyParser", (req, res) => {
+  const bodyCounter = req.body.counter; // getting from body which is parsed by body-parser
+  const sum = calculateSum(bodyCounter);
+  res.send(`From Body, calculated sum is ${sum}`);
 });
 
 app.listen(port, () => {
