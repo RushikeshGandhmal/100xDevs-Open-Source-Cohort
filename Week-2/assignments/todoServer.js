@@ -40,41 +40,51 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
+
 const express = require("express");
 const bodyParser = require("body-parser");
+const fs = require("fs");
 
 const app = express();
 
 app.use(bodyParser.json());
 
-const todos = [];
-
 app.get("/todos", (req, res) => {
-  res.json(todos);
+  fs.readFile("todos.json", "utf8", (err, data) => {
+    console.log("data", { data: data });
+    if (err) throw err;
+    res.json(JSON.parse(data));
+  });
 });
 
-app.get("todos/:id", (req, res) => {
-  const todoItem = todos.find((t) => t.id === parseInt(req.params.id));
-  if (!todoItem) {
-    res.status(404).send();
-  } else res.json(todoItem);
+app.get("/todos/:id", (req, res) => {
+  fs.readFile("todos.json", "utf8", (err, data) => {
+    if (err) throw err;
+    const todoItem = data.find((t) => t.id === parseInt(req.params.id));
+    if (!todoItem) res.status(404).send();
+    res.json(JSON.parse(todoItem));
+  });
 });
-
-let count = 1;
 
 app.post("/todos", (req, res) => {
   const newTodo = {
-    id: count++,
+    id: Math.floor(Math.random() * 1000000), // unique random id
     title: req.body.title,
     description: req.body.description,
   };
-  todos.push(newTodo);
-  res.status(201).json(newTodo);
-});
 
-app.put("/todos/:id", (req, res) => {});
+  fs.readFile("todos.json", "utf8", (err, data) => {
+    if (err) throw err;
+    const todo = JSON.parse(data);
+    todo.push(newTodo);
+
+    fs.writeFile("todos.json", JSON.stringify(data), "utf8", (err) => {
+      if (err) throw err;
+      res.status(201).json(newTodo);
+    });
+  });
+});
 
 app.listen(3000, () => {
-  console.log("Running on port 3000!");
+  console.log("Listening on port 3000!");
 });
-module.exports = app;
