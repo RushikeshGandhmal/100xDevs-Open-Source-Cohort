@@ -16,10 +16,72 @@
 
     Testing the server - run `npm run test-fileServer` command in terminal
  */
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const express = require("express");
+const bodyParser = require("body-parser");
+const fs = require("fs");
 const app = express();
 
+app.use(bodyParser.json());
 
-module.exports = app;
+app.get("/todos", (req, res) => {
+  fs.readFile("todos.json", "utf-8", (err, data) => {
+    if (err) return res.status(404).send();
+    if (data.length < 1) res.status(404).json("No Item Found, Please add one");
+    res.status(200).json(JSON.parse(data));
+  });
+});
+
+app.get("/todos/:id", (req, res) => {
+  fs.readFile("todos.json", "utf-8", (err, data) => {
+    if (err) return res.status(404).send();
+    const todos = JSON.parse(data);
+    const todo = todos.find((t) => t.id === parseInt(req.params.id));
+    if (!todo) res.status(404).send();
+    res.status(200).json(todo);
+  });
+});
+
+app.post("/todos", (req, res) => {
+  const newTodo = {
+    id: Math.floor(Math.random() * 1000000), // unique random id
+    title: req.body.title,
+    description: req.body.description,
+  };
+  fs.readFile("todos.json", "utf8", (err, data) => {
+    if (err) throw err;
+    const todos = JSON.parse(data);
+    todos.push(newTodo);
+    fs.writeFile("todos.json", JSON.stringify(todos), (err) => {
+      if (err) throw err;
+      res.status(201).json(newTodo);
+    });
+  });
+});
+
+app.put("/todos/:id", (req, res) => {
+  fs.readFile("todos.json", "utf-8", (err, data) => {
+    if (err) throw err;
+    const todos = JSON.parse(data);
+    const index = todos.findIndex((t) => {
+      return t.id === parseInt(req.params.id);
+    });
+    if (index == -1) res.status(404).send();
+
+    const updatedTodo = {
+      id: todos[index].id,
+      title: req.body.title,
+      description: req.body.description,
+    };
+    todos[index] = updatedTodo;
+    fs.writeFile("todos.json", JSON.stringify(todos), "utf-8", (err, data) => {
+      if (err) throw err;
+      res.status(201).json(todo);
+    });
+  });
+});
+
+app.listen(3000, () => {
+  console.log("Listing on port 3000!");
+});
+
+// module.exports = app;
